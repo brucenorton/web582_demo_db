@@ -1,3 +1,4 @@
 # ignore all logs
 .DS_Store
 db_connect.php
+.gitignore
