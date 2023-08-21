@@ -3,7 +3,8 @@
 $host = "localhost:3306";
 $db = "nortonb_demo_db";
 $user = "nortonb_demo_db";
-$pass = "ea1h^478F";
+$pass = "*********";
+//enter your info above !!
 
 $link = mysqli_connect($host, $user, $pass, $db);
 
@@ -17,5 +18,6 @@ if(!$link){
 }
 //echo out when live
 //echo json_encode($db_response);
+
 
 ?>
