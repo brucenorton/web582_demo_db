@@ -3,8 +3,8 @@
 $host = "localhost:3306";
 $db = "nortonb_demo_db";
 $user = "nortonb_demo_db";
-$pass = "*********";
-//enter your info above !!
+$pass = "****";
+//enter your
 
 $link = mysqli_connect($host, $user, $pass, $db);
 
