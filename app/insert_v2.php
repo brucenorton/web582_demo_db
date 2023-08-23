@@ -28,14 +28,17 @@
       }else{
         throw new Exception("No rows were inserted");
       }
+      //removed the echo from here
       //echo json_encode($results);
     }else{
       throw new Exception("Prepared statement did not insert records.");
     }
 
   }catch(Exception $error){
+    //add to results array rather than echoing out errors
     $results[] = ["error"=>$error->getMessage()];
   }finally{
+    //echo out results
     echo json_encode($results);
   }
 //example url with $_GET for full_name, email & tvshow
