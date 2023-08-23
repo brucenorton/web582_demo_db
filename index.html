@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>test app</title>
+  <title>demo db</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="copyright" content="&COPY; 2022-2029">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,12 +27,16 @@
       <h2>demo db app</h2>
     </section>
     <section id="insert">
-      <form>
+      <form id="insert-form">
         <fieldset>
           <legend>Favourite TV Shows</legend>
           <p>
-            <label for="name">Name:</label> 
-            <input type="text" name="name" />
+            <label for="full_name">Name:</label> 
+            <input type="text" name="full_name" />
+          </p>
+          <p>
+            <label for="email">Email:</label> 
+            <input type="text" name="email" />
           </p>
           <p>
             <label for="tvshow">favourite tv show:</label> 
@@ -40,7 +44,7 @@
           </p>
           <section>
             <p>
-              <a href="#" type="submit">Share your favourite tv show.</a>
+              <a href="#" type="submit" id="submit">Share your favourite tv show.</a>
             </p>
           </section>
 

@@ -3,7 +3,8 @@
   require_once "_includes/db_connect.php";
 
   //prepare the statement passing the db $link and the SQL
-  $stmt = mysqli_prepare($link, "SELECT name, email, tvshow, timestamp FROM demo");
+  /* ADDED "'ORDER BY' timestamp DESC" at the end of the query for reverse, chronological order */
+  $stmt = mysqli_prepare($link, "SELECT name, email, tvshow, timestamp FROM demo ORDER BY timestamp DESC");
 
   //execute the statement / query from abobe
   mysqli_stmt_execute($stmt);
