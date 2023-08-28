@@ -1,6 +1,6 @@
 <?php
   require_once "_includes/db_connect.php";
-
+ /* _v2 adds try / catch / finally error checking */
   $results = [];
   $insertedRows = 0;
 
