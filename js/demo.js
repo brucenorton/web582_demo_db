@@ -35,7 +35,7 @@ function getFormData(event){
 
   //get the form data & call an async function
   const insertFormData = new FormData(document.querySelector('#insert-form'));
-  let url = 'app/insert_v2.php';
+  let url = 'app/insert_v3.php';
   inserter(insertFormData, url);
 }
 

@@ -4,90 +4,92 @@
   // ** v3 adds a select query to see if an email already exists **
   /* pseudo code **
     -receive input
-      -check (select) to see if user exists 
-        -if yes > update 
-        -if no > insert
+      -check (select) to see if user exists > selectUser();
+        -if yes > update > updateData();
+        -if no > insert > insertData();
  */
 
   $results = [];
   $insertedRows = 0;
 
-// 3 separate functions to select, update and insert
+  //3 functions abstracted from main code
   function selectUser($link){
-    // ** must pass in connection $link due to php scope
+    //need to pass db $link to the function due to scope
     $query = "SELECT * FROM demo WHERE email = ?";
-    $stmt = mysqli_prepare($link, $query);
-    
-    mysqli_stmt_bind_param($stmt, "s", $_REQUEST["email"]);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $results[] = ["mysqli_num_rows" => mysqli_num_rows($result)];
-    return mysqli_num_rows($result) > 0;
-    
-  }
 
-  function updateData($link) {
-            //UPDATE `demo` SET `tvshow` = 'Ninja' WHERE `demo`.`demoID` = 8;
-    $query = "UPDATE demo SET tvshow = ? WHERE email = ?";
-    $stmt = mysqli_prepare($link, $query);
-    
-    mysqli_stmt_bind_param($stmt, "ss", $_REQUEST["tvshow"], $_REQUEST["email"]);
-    mysqli_stmt_execute($stmt);
+    if($stmt = mysqli_prepare($link, $query)){
+      mysqli_stmt_bind_param($stmt, "s", $_REQUEST["email"]);
+      mysqli_stmt_execute($stmt);
+      $result = mysqli_stmt_get_result($stmt);
+      $results[] = ["mysqli_num_rows" => mysqli_num_rows($result)];
+      return mysqli_num_rows($result) > 0;
 
-    if (mysqli_stmt_affected_rows($stmt) <= 0) {
-        throw new Exception("Error updating data: " . mysqli_stmt_error($stmt));
+    }else{
+      throw new Exception("No user was found");
     }
-
-    return mysqli_stmt_affected_rows($stmt);
   }
 
+  function updateData($link){
+    $query = "UPDATE demo SET tvshow = ? WHERE email = ?";
+
+    if($stmt = mysqli_prepare($link, $query)){
+      mysqli_stmt_bind_param($stmt, "ss", $_REQUEST["tvshow"], $_REQUEST["email"]);
+      mysqli_stmt_execute($stmt);
+      
+      if (mysqli_stmt_affected_rows($stmt) <= 0) {
+        throw new Exception("Error updating data: " . mysqli_stmt_error($stmt));
+      }
+      $results[] = ["updatedData() affected_rows" => mysqli_stmt_affected_rows($stmt)];
+      return mysqli_stmt_affected_rows($stmt);
+    }
+  }
 
   function insertData($link){
     $query = "INSERT INTO demo (name, email, tvshow) VALUES (?, ?, ?)";
 
     if($stmt = mysqli_prepare($link, $query)){
-      mysqli_stmt_bind_param($stmt, 'sss', $_REQUEST["full_name"], $_REQUEST["email"], $_REQUEST["tvshow"]);
+      mysqli_stmt_bind_param($stmt, "sss", $_REQUEST["full_name"], $_REQUEST["email"], $_REQUEST["tvshow"]);
       mysqli_stmt_execute($stmt);
       $insertedRows = mysqli_stmt_affected_rows($stmt);
-  
+
       if($insertedRows > 0){
-        //is this in the global space?
-        return $results[] = [
+        $results[] = [
           "insertedRows"=>$insertedRows,
           "id" => $link->insert_id,
-          "full_name" => $_REQUEST["full_name"]
+          "full_name" => $_REQUEST["full_name"],
+          "tvshow" => $_REQUEST["tvshow"]
         ];
       }else{
         throw new Exception("No rows were inserted");
       }
-      return $insertedRows;
-    }else{
-      throw new Exception("Prepared statement did not insert records.");
+      //removed the echo from here
+      //echo json_encode($results);
     }
-
   }
 
-/** move all the logic to here */
+  //main logic of the application is in this try{} block of code.
   try{
-    if(!isset($_REQUEST["full_name"]) || !isset($_REQUEST["email"]) || !isset($_REQUEST["tvshow"])    ){
+    //see if user has entered data
+    if(!isset($_REQUEST["full_name"]) || !isset($_REQUEST["email"]) || !isset($_REQUEST["tvshow"])){
       throw new Exception('Required data is missing i.e. full_name, email or tvshow');
     }else{
-      //if email exists update tvshow
-      if(selectUser($link)){ //this should return either 1 or 0 i.e. true or false
-        $results[] = ["selectUser()" => "callupdateData()"];
-        $results[] = ["updateData() affected_rows" => updateData($link)];\
-      //else insert new record
+      //if they have see if user (email) exists & update data
+      if(selectUser($link)){
+        $results[] = ["selectUser()" => "called updateData()"];
+        $results[] = ["updateData() affected_rows" => updateData($link)];
       }else{
-        $results[] = ["selectUser()" => "insertData()"];
+        //if user does not exist, insert the data
+        $results[] = ["insertData()" => "called insertData()"];
         $results[] = ["insertData() affected_rows" => insertData($link)];
-
       }
     }
+      
   }catch(Exception $error){
+    //add to results array rather than echoing out errors
     $results[] = ["error"=>$error->getMessage()];
   }finally{
+    //echo out results
     echo json_encode($results);
   }
-//example url with $_GET for full_name, email & tvshow
-// https://nortonb.web582.com/demo_db/app/insert_v3.php?full_name=Bobby&email=bobby@dot.com&tvshow=Winning
+ 
 ?>
