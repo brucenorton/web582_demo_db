@@ -21,7 +21,8 @@
       mysqli_stmt_bind_param($stmt, "s", $_REQUEST["email"]);
       mysqli_stmt_execute($stmt);
       $result = mysqli_stmt_get_result($stmt);
-      $results[] = ["mysqli_num_rows" => mysqli_num_rows($result)];
+      //$results[] = ["mysqli_num_rows" => mysqli_num_rows($result)];
+      $results[] = ["from selectUser() function " => $result];
       return mysqli_num_rows($result) > 0;
 
     }else{
@@ -39,7 +40,7 @@
       if (mysqli_stmt_affected_rows($stmt) <= 0) {
         throw new Exception("Error updating data: " . mysqli_stmt_error($stmt));
       }
-      $results[] = ["updatedData() affected_rows" => mysqli_stmt_affected_rows($stmt)];
+      $results[] = ["updatedData() affected_rows man" => mysqli_stmt_affected_rows($stmt)];
       return mysqli_stmt_affected_rows($stmt);
     }
   }
@@ -76,7 +77,7 @@
       //if they have see if user (email) exists & update data
       if(selectUser($link)){
         $results[] = ["selectUser()" => "called updateData()"];
-        $results[] = ["updateData() affected_rows" => updateData($link)];
+        $results[] = ["updateData() affected_rows " => updateData($link)];
       }else{
         //if user does not exist, insert the data
         $results[] = ["insertData()" => "called insertData()"];
